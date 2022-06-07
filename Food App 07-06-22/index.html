@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Food</title>
+    <link rel="stylesheet" href="/import_folder/navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-image: url("https://wallpaperaccess.com/full/1462457.jpg");
+      }
+
+      #search_bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: auto;
+        margin: auto;
+        margin-top: 100px;
+        margin-bottom: 50px;
+      }
+
+      #input {
+        font-size: 17px;
+        border-radius: 3px;
+        padding-left: 5px;
+        width: 300px;
+      }
+
+      #search_icon {
+        border: 1px solid black;
+        padding: 2px;
+        background-color: white;
+        border-radius: 3px;
+      }
+
+      #container {
+        margin-top: 50px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        gap: 25px;
+        width: 90%;
+        margin: auto;
+      }
+
+      #box {
+        text-align: center;
+        box-shadow: white 0px 5px 15px;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: black;
+      }
+
+      #box:hover {
+        cursor: pointer;
+      }
+
+      #error {
+        color: black;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        box-shadow: white 0px 5px 15px;
+        width: 300px;
+        margin: auto;
+        border-radius: 5px;
+        background-color: rgba(218, 185, 185, 0.733);
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar"></div>
+
+    <div id="search_bar">
+      <input id="input" type="text" placeholder="Search for a Meal..." />
+
+      <span id="search_icon" class="material-symbols-outlined"> search </span>
+    </div>
+
+    <div id="container"></div>
+
+    <p id="error">No results found..!!</p>
+  </body>
+</html>
+
+<script type="module">
+  /*NAVBAR*/
+
+  import navbar from "/import_folder/navbar.js";
+
+  document.querySelector("#navbar").innerHTML = navbar();
+
+  /*FETCH AND DISPLAY*/
+
+  var id;
+
+  document.querySelector("#input").addEventListener("input", function_input);
+
+  function function_input() {
+    var query = document.querySelector("#input").value;
+
+    call_api(query);
+
+    console.log(query);
+  }
+
+  function call_api(query) {
+    var url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`;
+
+    async function seach_char() {
+      try {
+        var data = await fetch(url);
+
+        var response = await data.json();
+
+        console.log(response);
+
+        display_data(response.meals);
+
+        if (query == "") {
+          document.querySelector("#container").style.display = "none";
+          document.querySelector("#error").style.display = "none";
+        } else {
+          document.querySelector("#container").style.display = "grid";
+          document.querySelector("#error").style.display = "none";
+        }
+      } catch (error) {
+        console.log("error");
+        document.querySelector("#error").style.display = "block";
+      }
+    }
+
+    debounce(seach_char, 1000);
+    /*seach_char();*/
+  }
+
+  function display_data(data) {
+    document.querySelector("#container").innerHTML = null;
+
+    data.forEach(function (el) {
+      var box = document.createElement("div");
+      box.setAttribute("id", "box");
+      document.querySelector("#container").append(box);
+
+      var image = document.createElement("img");
+      image.style.height = "250px";
+      image.style.width = "250px";
+      image.style.borderTopLeftRadius = "10px";
+      image.style.borderTopRightRadius = "10px";
+      image.src = el.strMealThumb;
+
+      var name = document.createElement("h2");
+      name.innerText = el.strMeal;
+      name.style.color = "white";
+
+      box.addEventListener("click", function_page);
+
+      function function_page() {
+        var data = {
+          strMeal: el.strMeal,
+          strInstructions: el.strInstructions,
+          strYoutube: el.strYoutube,
+        };
+
+        console.log(data);
+
+        localStorage.setItem("instructions", JSON.stringify(data));
+
+        window.location.href = "instructions.html";
+      }
+
+      box.append(image, name);
+    });
+  }
+
+  function debounce(func, delay) {
+    if (id) {
+      clearTimeout(id);
+    }
+
+    id = setTimeout(function () {
+      func();
+    }, delay);
+  }
+</script>

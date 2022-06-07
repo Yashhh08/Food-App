@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instructions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-image: url("https://wallpaperaccess.com/full/1462399.jpg");
+      }
+
+      #content {
+        text-align: center;
+        width: 70%;
+        margin: auto;
+        margin-top: 100px;
+        font-size: 20px;
+        font-weight: 600;
+        color: black;
+      }
+
+      #link_ {
+        background-color: brown;
+        color: white;
+        border-radius: 10px;
+        font-size: 15px;
+        padding: 10px;
+        margin-top: 10px;
+      }
+
+      #link_:hover {
+        cursor: pointer;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <h2 id="name"></h2>
+
+      <p id="instruction"></p>
+
+      <div id="youtube">
+        <button id="link_">Watch Video</button>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  var instructions = JSON.parse(localStorage.getItem("instructions"));
+
+  document.querySelector("#name").innerText = instructions.strMeal;
+
+  document.querySelector("#instruction").innerText =
+    instructions.strInstructions;
+
+  document.querySelector("#link_").addEventListener("click", function () {
+    window.location.href = instructions.strYoutube;
+  });
+</script>

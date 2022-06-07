@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Receipe of the day</title>
+    <link rel="stylesheet" href="/import_folder/navbar.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-image: url("https://wallpaperaccess.com/full/1844074.jpg");
+      }
+
+      #container {
+        text-align: center;
+        width: 70%;
+        margin: auto;
+        margin-top: 50px;
+        font-size: 20px;
+        font-weight: 600;
+        color: black;
+      }
+
+      #image {
+        width: 300px;
+        height: 300px;
+      }
+
+      .bg {
+        background-color: rgba(218, 208, 208, 0.336);
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      #link_ {
+        background-color: brown;
+        color: white;
+        border-radius: 10px;
+        font-size: 15px;
+        padding: 10px;
+        margin-top: 10px;
+      }
+
+      #link_:hover {
+        cursor: pointer;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar"></div>
+
+    <div id="container"></div>
+  </body>
+</html>
+
+<script type="module">
+  /*NAVBAR*/
+
+  import navbar from "/import_folder/navbar.js";
+
+  document.querySelector("#navbar").innerHTML = navbar();
+
+  /*FETCH AND DISPLAY*/
+
+  async function fetch_data() {
+    var url = "https://www.themealdb.com/api/json/v1/1/random.php";
+    try {
+      var data = await fetch(url);
+
+      var response = await data.json();
+
+      console.log(response.meals);
+
+      display_data(response.meals);
+    } catch (error) {
+      console.log("error");
+    }
+  }
+  fetch_data();
+
+  function display_data(data) {
+    data.forEach(function (el) {
+      var box = document.createElement("div");
+      box.setAttribute("id", "box");
+      document.querySelector("#container").append(box);
+
+      var image = document.createElement("img");
+      image.setAttribute("src", el.strMealThumb);
+      image.setAttribute("id", "image");
+
+      var name = document.createElement("h1");
+      name.innerText = el.strMeal;
+
+      var instruction = document.createElement("h3");
+      instruction.innerText = el.strInstructions;
+      instruction.setAttribute("class", "bg");
+
+      var button = document.createElement("button");
+      button.innerText = "Watch Video";
+      button.setAttribute("id", "link_");
+
+      button.addEventListener("click", function () {
+        window.location.href = el.strYoutube;
+      });
+
+      box.append(image, name, instruction, button);
+    });
+  }
+</script>

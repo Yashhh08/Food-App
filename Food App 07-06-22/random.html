@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Receipes</title>
+    <link rel="stylesheet" href="/import_folder/navbar.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-image: url("https://wallpaperaccess.com/full/1306023.jpg");
+      }
+
+      #container {
+        margin-top: 50px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        gap: 25px;
+        width: 90%;
+        margin: auto;
+        margin-top: 50px;
+      }
+
+      #box {
+        text-align: center;
+        box-shadow: white 0px 5px 15px;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: black;
+      }
+
+      #box:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar"></div>
+
+    <div id="container"></div>
+  </body>
+</html>
+
+<script type="module">
+  /*NAVBAR*/
+
+  import navbar from "/import_folder/navbar.js";
+
+  document.querySelector("#navbar").innerHTML = navbar();
+
+  /*FETCH AND DISPLAY*/
+
+  async function seach_char() {
+    var url = "https://www.themealdb.com/api/json/v1/1/filter.php?a=italian";
+    try {
+      var data = await fetch(url);
+
+      var response = await data.json();
+
+      console.log(response);
+
+      display_data(response.meals);
+    } catch (error) {
+      console.log("error");
+    }
+  }
+  seach_char();
+
+  function display_data(data) {
+    document.querySelector("#container").innerHTML = null;
+
+    data.forEach(function (el) {
+      var box = document.createElement("div");
+      box.setAttribute("id", "box");
+      document.querySelector("#container").append(box);
+
+      var image = document.createElement("img");
+      image.style.height = "250px";
+      image.style.width = "250px";
+      image.style.borderTopLeftRadius = "10px";
+      image.style.borderTopRightRadius = "10px";
+      image.src = el.strMealThumb;
+
+      var name = document.createElement("h2");
+      name.innerText = el.strMeal;
+      name.style.color = "white";
+
+      box.append(image, name);
+
+      box.addEventListener("click", function_page);
+
+      function function_page() {
+        var data = {
+          strMeal: el.strMeal,
+          strInstructions: el.strInstructions,
+          strYoutube: el.strYoutube,
+        };
+
+        console.log(data);
+
+        localStorage.setItem("instructions", JSON.stringify(data));
+
+        window.location.href = "instructions.html";
+      }
+    });
+  }
+</script>
